@@ -16,7 +16,6 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    await this.getPastMessages();
     this.getMessages();
   }
 
@@ -29,17 +28,13 @@ class App extends Component {
     }
   }
 
-  getPastMessages = async () => {
-    const { data } = await axios.get("http://139.162.254.62/longpoll/pastMessages");
-    this.setState({ messages: data });
-  };
-
   getMessages = async () => {
     try {
-      const { data } = await axios.get("http://139.162.254.62/longpoll/messages");
-      this.handleMessage(data);
-      console.log(data);
-      this.getMessages();
+      const evtSource = new EventSource("http://localhost:3200/stream");
+      evtSource.addEventListener('message', this.handleMessage);
+      evtSource.addEventListener('open', (e) => {
+        console.log("moi", e);
+      })
     } catch (err) {
       console.log("error: ", err);
     }
@@ -47,7 +42,7 @@ class App extends Component {
 
   sendMessage = (e) => {
     e.preventDefault();
-    axios.post("http://139.162.254.62/longpoll/messages", {
+    axios.post("http://localhost:3200/message", {
       name: this.state.username,
       message: this.state.message,
       color: this.state.color,
@@ -55,8 +50,9 @@ class App extends Component {
     this.setState({ message: "" });
   };
 
-  handleMessage = data => {
-    this.setState({ messages: [ ...this.state.messages, data ] });
+  handleMessage = e => {
+    const data = JSON.parse(e.data);
+    this.setState({ messages: [ ...this.state.messages, ...data ] });
     setTimeout(() => {
       const objDiv = document.getElementById("chatwindow");
       if (objDiv) {
