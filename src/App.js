@@ -30,7 +30,7 @@ class App extends Component {
 
   getMessages = async () => {
     try {
-      const evtSource = new EventSource("http://localhost:3200/stream");
+      const evtSource = new EventSource("http://sse.sartonon.fi/api/stream");
       evtSource.addEventListener('message', this.handleMessage);
       evtSource.addEventListener('open', (e) => {
         console.log("moi", e);
@@ -42,7 +42,7 @@ class App extends Component {
 
   sendMessage = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:3200/message", {
+    axios.post("http://sse.sartonon.fi/api/message", {
       name: this.state.username,
       message: this.state.message,
       color: this.state.color,
