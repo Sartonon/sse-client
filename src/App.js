@@ -12,7 +12,7 @@ class App extends Component {
     username: "",
     usernameConfirmed: false,
     message: "",
-    color: 0,
+    color: 'green',
   };
 
   async componentDidMount() {
@@ -25,6 +25,10 @@ class App extends Component {
       if (objDiv) {
         objDiv.scrollTop = objDiv.scrollHeight;
       }
+    }
+
+    if (this.state.messages.length > 10) {
+      this.setState({ messages: [] });
     }
   }
 
@@ -68,8 +72,19 @@ class App extends Component {
   confirmUsername = () => {
     this.setState({
       usernameConfirmed: true,
-      color: `rgb(${getRandomInt(255)}, ${getRandomInt(255)}, ${getRandomInt(255)})`,
+      color: `green`,
     });
+  };
+
+  startSending = () => {
+    if (this.messageInterval) clearInterval(this.messageInterval);
+    this.messageInterval = setInterval(() => {
+      axios.post("http://sse.sartonon.fi/api/message", {
+        name: 'Santeri',
+        message: 'Moikka!',
+        color: 'green',
+      });
+    }, this.state.interval || 1000);
   };
 
   handleMessageChange = (e) => {
@@ -96,6 +111,8 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Chat</h1>
+          <button onClick={this.startSending}>Laheta</button>
+          <input onChange={e => this.setState({ interval: e.target.value })} />
         </header>
         {!usernameConfirmed ?
           <div className="Login-div">
