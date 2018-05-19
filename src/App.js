@@ -16,7 +16,6 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    this.getMessages();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -74,6 +73,7 @@ class App extends Component {
       usernameConfirmed: true,
       color: `green`,
     });
+    this.getMessages();
   };
 
   startSending = () => {
