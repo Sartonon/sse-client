@@ -35,7 +35,7 @@ class App extends Component {
 
   getMessages = async () => {
     try {
-      const evtSource = new EventSource("http://sse.sartonon.fi/api/stream");
+      const evtSource = new EventSource("http://localhost:3080/sse/stream");
       evtSource.addEventListener('message', this.handleMessage);
       evtSource.addEventListener('open', (e) => {
         console.log("moi", e);
@@ -47,7 +47,7 @@ class App extends Component {
 
   sendMessage = (e) => {
     e.preventDefault();
-    axios.post("http://sse.sartonon.fi/api/message", {
+    axios.post("http://localhost:3080/sse/message", {
       name: this.state.username,
       message: this.state.message,
       color: this.state.color,
@@ -73,7 +73,7 @@ class App extends Component {
           this.setState(prevState => ({
             sentMessages: prevState.sentMessages + 1
           }));
-          axios.post("http://sse.sartonon.fi/api/message", {
+          axios.post("http://localhost:3080/sse/message", {
             name,
             message,
             color: "green"
@@ -109,7 +109,7 @@ class App extends Component {
   startSending = () => {
     if (this.messageInterval) clearInterval(this.messageInterval);
     this.messageInterval = setInterval(() => {
-      axios.post("http://sse.sartonon.fi/api/message", {
+      axios.post("http://localhost:3080/sse/message", {
         name: 'Santeri',
         message: 'Moikka!',
         color: 'green',
